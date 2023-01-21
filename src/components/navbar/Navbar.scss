@@ -1,4 +1,9 @@
+@import "./../../common/css-variables/variables.scss";
+
 .navbar__conatiner {
+  & .main__nav {
+    background-color: $navcolor !important;
+  }
   & .navbar-text {
     color: green;
   }

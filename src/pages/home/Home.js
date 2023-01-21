@@ -14,7 +14,7 @@ function Home(props) {
 
     return (
         <div className='container home__conatiner'>
-            <h1>Home page</h1>
+            <h1>Home page <button className='mybtn'>css</button></h1>
             {
                 loading ? "plz wait" :
                     data?.map((ele, i) => {

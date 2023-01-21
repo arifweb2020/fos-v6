@@ -1,0 +1,15 @@
+/* COLOR*/
+$blackColor: #000;
+$navcolor: #3f51b5;
+$whiteColor: #fff;
+
+/* Fonts*/
+$titleFont: Arial, Helvetica, sans-serif;
+$bodyFont: "Times New Roman", Times, serif;
+
+@mixin buttonStyle($bgcolor, $color, $fontSize, $width) {
+  width: $width;
+  background: $bgcolor;
+  color: $color;
+  font-size: $fontSize;
+}
