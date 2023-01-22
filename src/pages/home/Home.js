@@ -2,14 +2,20 @@ import React from 'react';
 import './Home.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { userAsync } from '../../store/extra-reducers/testSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function Home(props) {
-    const { data, loading } = useSelector((state) => state.users);
+    // const { data, loading } = useSelector((state) => state.users);
+    const [data,setData]=useState();
+    const [loading,setLoading]=useState(true);
     const dispatch = useDispatch();
     
     useEffect(() => {
-        dispatch(userAsync())
+        dispatch(userAsync()).then((res)=>{
+            console.log("res " , res.payload)
+            setData(res.payload)
+            setLoading(false)
+        })
     }, [dispatch])
 
     return (
