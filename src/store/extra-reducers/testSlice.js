@@ -7,12 +7,26 @@ const initialState = {
     status: null,
     loading: true,
     data: [],
+    singleuser:{}
 }
 
 export const userAsync = createAsyncThunk(
     'users/userlist',
     async (args) => {
-        const res = await axios.get(`${endPointUrl}/users`)
+        const res = await axios.get(`${endPointUrl}/posts`)
+        return res?.data
+    }
+)
+
+export const singleuserAsync = createAsyncThunk(
+    "users/singleuser",
+    //dispatch(singleuserAsync(id)) if u r dispatching this way
+    // async(id)=>{
+    //     const res = await axios.get(`${endPointUrl}/posts/${id}`)
+    //     return res?.data
+    // }
+    async({userId})=>{
+        const res = await axios.get(`${endPointUrl}/posts/${userId}`)
         return res?.data
     }
 )
@@ -36,6 +50,21 @@ export const testSlice = createSlice({
             })
             .addCase(userAsync.rejected, (state) => {
                 state.data = null;
+                state.loading = true;
+                state.status = "rejected";
+            })
+            .addCase(singleuserAsync.pending,(state)=>{
+                state.singleuser = null;
+                state.loading = true;
+                state.status = "pending";
+            })
+            .addCase(singleuserAsync.fulfilled,(state,{payload})=>{
+                state.singleuser = payload;
+                state.loading = false;
+                state.status = "success";
+            })
+            .addCase(singleuserAsync.rejected,(state)=>{
+                state.singleuser = null;
                 state.loading = true;
                 state.status = "rejected";
             })

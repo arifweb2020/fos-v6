@@ -1,17 +1,29 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { singleuserAsync } from '../../store/extra-reducers/testSlice';
 
 function About(props) {
-    const{data,loading} = useSelector((state)=>state.users)
-    
+    const { singleuser, loading } = useSelector((state) => state.users);
+    const { id } = useParams();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        //dispatch(singleuserAsync(id)) u can this way also
+        dispatch(singleuserAsync({ userId: id }))
+    }, [dispatch, id])
+
     return (
-        <div className='about__container'>
+        <div className='container about__container mt-3'>
             <h1>About</h1>
             {
                 loading ? "plz wait" :
-                    data?.map((ele, i) => {
-                        return <p key={i}>{ele.name}</p>
-                    })
+                    <>
+                        <h3>{singleuser.title}</h3>
+                        <p>{singleuser.body}</p>
+                    </>
+
+
             }
         </div>
     );

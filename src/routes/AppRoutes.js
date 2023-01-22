@@ -29,7 +29,7 @@ function AppRoutes(props) {
                 <Routes>
                     <Route path="/login" element={<LoginConatiner><Login /></LoginConatiner>} />
                     <Route path="/" element={<MainContainer><PrivateRoutes Component={Home} /></MainContainer>} />
-                    <Route path="/about" element={<MainContainer><PrivateRoutes Component={About} /></MainContainer>} />
+                    <Route path="/about/:id" element={<MainContainer><PrivateRoutes Component={About} /></MainContainer>} />
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </React.Suspense>

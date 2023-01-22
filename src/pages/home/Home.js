@@ -3,12 +3,14 @@ import './Home.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { userAsync } from '../../store/extra-reducers/testSlice';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Home(props) {
     // const { data, loading } = useSelector((state) => state.users);
     const [data,setData]=useState();
     const [loading,setLoading]=useState(true);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     
     useEffect(() => {
         dispatch(userAsync()).then((res)=>{
@@ -24,7 +26,7 @@ function Home(props) {
             {
                 loading ? "plz wait" :
                     data?.map((ele, i) => {
-                        return <p key={i}>{ele.name}</p>
+                        return <h4 key={i} onClick={()=>navigate(`/about/${ele.id}`)} style={{cursor:'pointer'}}>{ele.title}</h4>
                     })
             }
         </div>
