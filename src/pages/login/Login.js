@@ -17,9 +17,21 @@ function Login(props) {
     }, [navigate])
 
 
+    const loginHn = async()=>{
+
+        const res = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+        const res1 = await res.json();
+        console.log(res1)
+        localStorage.setItem('red' , JSON.stringify(res1))
+       
+
+        navigate("/")
+    }
+
     return (
         <div className='login__container'>
             <h1>Login</h1>
+            <button onClick={loginHn}>Login</button>
         </div>
     );
 }

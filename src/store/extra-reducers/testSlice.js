@@ -7,8 +7,10 @@ const initialState = {
     status: null,
     loading: true,
     data: [],
-    singleuser:{}
+    singleuser:{},
+    userDetails:JSON.parse(localStorage.getItem('red')) || "-"
 }
+
 
 export const userAsync = createAsyncThunk(
     'users/userlist',
@@ -35,7 +37,11 @@ export const testSlice = createSlice({
 
     name: "users",
     initialState,
-    reducers: {},
+    reducers: {
+        // getUser(state){
+        //    state.userDetails = JSON.parse(localStorage.getItem('red'))
+        // }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(userAsync.pending, (state) => {
@@ -72,7 +78,7 @@ export const testSlice = createSlice({
 
 
 })
-
+//export const {getUser} = testSlice.actions;
 export default testSlice.reducer
 
 
