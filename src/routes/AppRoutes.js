@@ -8,11 +8,9 @@ import MainContainer from './../components/main-conatiner/MainContainer';
 
 const Home = React.lazy(() => import('./../pages/home/Home'));
 const About = React.lazy(() => import('./../pages/about/About'));
+const Products = React.lazy(() => import('./../pages/products/Products'));
 const Login = React.lazy(() => import('./../pages/login/Login'));
 const ErrorPage = React.lazy(() => import('./../pages/errorpage/ErrorPage'));
-
-
-
 
 
 function AppRoutes(props) {
@@ -30,6 +28,7 @@ function AppRoutes(props) {
                     <Route path="/login" element={<LoginConatiner><Login /></LoginConatiner>} />
                     <Route path="/" element={<MainContainer><PrivateRoutes Component={Home} /></MainContainer>} />
                     <Route path="/about/:id" element={<MainContainer><PrivateRoutes Component={About} /></MainContainer>} />
+                    <Route path="/search/:searchKey" element={<MainContainer><PrivateRoutes Component={Products} /></MainContainer>} />
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </React.Suspense>
