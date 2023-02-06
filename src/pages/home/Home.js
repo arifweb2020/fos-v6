@@ -1,92 +1,137 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Home.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { userAsync, getUser } from '../../store/extra-reducers/testSlice';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import RenderProps from '../../components/render-props/RenderProps';
-import Counter from '../../components/render-counter/Counter';
-import RenBtn from '../../components/render-props-button.js/RenBtn';
+import useDebounce from '../../hooks/useDebounce';
+
 
 function Home(props) {
 
+    const [data, setData] = useState([]);
+    const [user, setUser] = useState({});
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false);
+    const [errors, setErrors] = useState(false);
 
-    const { userDetails } = useSelector((state) => state.users);
-    const [data, setData] = useState();
-    const [loading, setLoading] = useState(true);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-
-    const [users,setUsers]=useState([])
-    const total = 4;
-    const [next , setNext] = useState(total)
-    const [compl,setCompl]= useState(false)
-
-    useEffect(()=>{
-   (async ()=>{
-    const res = await fetch('https://jsonplaceholder.typicode.com/users');
-    const res1 = await res.json();
-    setUsers(res1)
-   })()
-    },[])
+    const [search,setSearch] = useState("")
+    const[sdata,setSdata] = useState([]);
+    const debounce = useDebounce(search,700)
 
     
 
-const moreData = ()=>{
-    setNext((prev) => prev + 4)
+    const getData = async () => {
+        const res = await fetch("https://fakestoreapi.com/products");
+        return await res.json();
+    };
 
-    if (next >= users.length) {
-        setCompl(true)
-      } else {
-        setCompl(false)
-      }
-}
-
-const lessData=()=>{
-    setNext(4)
-}
+    const getuser = async () => {
+        const res = await fetch("https://dummyjson.com/products");
+        return await res.json();
+    };
 
     useEffect(() => {
-        dispatch(userAsync()).then((res) => {
-            console.log("res ", res.payload)
-            setData(res.payload)
-            setLoading(false)
+        Promise.all([getData(), getuser()])
+            .then(([res1, res2]) => {
+                setData(res1)
+                setUser(res2)
+                setLoading(false)
+            }).catch((err) => {
+                setError(true)
+            })
+    }, []);
+
+
+    // const handleChange = (e)=>{
+    //   const{value} = e.target;
+    //   setSearch(value)
+    //   fetch(`https://demo.dataverse.org/api/search?q=${value}`).
+    //   then((res)=>res.json())
+    //   .then((res)=>{
+    //     setSdata(res.data.items)
+    //   })
+    // }
+
+    useEffect(() => {
+        if(debounce) {
+            searchData(debounce);
+        }else {
+          console.log('Something else')
+        }
+      },[debounce]) 
+
+    const searchData = (text) => {
+        fetch(`https://demo.dataverse.org/api/search?q=${text}`)
+        .then((res) => res.json())
+        .then((response) => {
+          console.log('Reponse', response);
+          setSdata(response.data.items)
         })
+      }
 
-    }, [dispatch])
+      const [items, setItems] = useState(['item1', 'item2', 'item3']);
 
+      const handleDelete = (index) => {
+        const newItems = [...items];
+        newItems.splice(index, 1);
+        setItems(newItems);
+      };
+    
+      const handleSelectMultiple = (e) => {
+        const selectedIndexes = Array.from(e.target.selectedOptions).map((option) => option.index);
+    
+        let newItems = [...items];
+    
+        selectedIndexes.forEach((index) => {
+          newItems.splice(index, 1);
+        });
+    
+        setItems(newItems);
+      };
     return (
         <div className='container home__conatiner'>
-            <div className='load'>
-                {
-                    users?.slice(0,next)?.map((ele)=>{
-                        return <h1>{ele.name}</h1>
-                    })
-                }
-               {
-                compl ?  <button className='btn btn-md btn-primary' onClick={lessData}>show less</button>
-                 : <button className='btn btn-md btn-primary' onClick={moreData}>load more</button> 
-               }
-                
-            </div>
-            {/* <RenderProps render={()=> "render props"}/> */}
-            {/* passing as aprops */}
-            <RenderProps render={(param) => param} />
+<div>
+      <select  onChange={handleSelectMultiple}>
+        {items.map((item, index) => (
+          <option key={index} value={item}>{item}</option>))}
+      </select>
 
-            <Counter render={(cc, increment, decrement) => (<RenBtn cnt={cc} inc={increment} dec={decrement} />)} />
+      <ul>{items.map((item, index) => (
+        <li key={index}>{item}<button onClick={() => handleDelete(index)}>Delete</button></li>) )}</ul>  
 
-            <p>user from redux - {userDetails.title}</p>
-            <h1>Home page <button className='mybtn'>css</button></h1>
+    </div>  
+        <input type="text" value={search} onChange={(e)=>setSearch(e.target.value)} />
 
+        {
+            sdata.length > 0 && search.length > 0 ?
+            <>
             {
-                loading ? "plz wait" :
-                    data?.slice(0,2).map((ele, i) => {
-                        return <h4 key={i} onClick={() => navigate(`/about/${ele.id}`)} style={{ cursor: 'pointer' }}>{ele.title}</h4>
-                    })
+                sdata?.map((ele)=>{
+                    return <p>{ele.name}</p>
+                })
             }
+            </> : "No data"
+        }
+
+            <div>
+                {error ? "some error" :
+                    loading ? "wait " :
+                        data.length === 0 ? "no data found" :
+                            <>{data?.slice(0, 2)?.map((ele) => <h1>{ele?.title}</h1>)}</>
+                }
+            </div>
+
+            <div>
+                {errors ? "some error" :
+                    loading ? "wait " :
+                        user?.products?.length === 0 ? "no data found" :
+                            <>{user?.products?.slice(0, 5)?.map((ele) => <h1>{ele.title}</h1>)}</>
+                }
+            </div>
+
+
+            {/* {Object?.keys(user?.products)?.length && user?.products?.slice(0,5)?.map((ele) => <h1>{ele.title}</h1>)} */}
         </div>
     );
 }
 
 export default Home;
+
+//Multiple Selection & Deletion Of List Items in react hooks

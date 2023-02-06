@@ -18,7 +18,7 @@ function App() {
   );
 }
 
-// react table server side pagination using hooks
+
 
 export default App;
 
